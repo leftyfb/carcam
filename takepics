@@ -1,0 +1,58 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          takepics
+# Required-Start:    hostname $local_fs
+# Required-Stop:
+# Should-Start:      $x-display-manager gdm kdm xdm ldm sdm wdm nodm
+# Default-Start:     2
+# Default-Stop:
+# Short-Description: Make takepics
+# Description:       Make takepics
+#                    
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+[ "$DELAYLOGIN" ] || DELAYLOGIN=yes
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+. /lib/lsb/init-functions
+
+do_start () {
+ /bin/takepics.sh >/dev/null 2>&1 &
+}
+
+do_stop () {
+ echo "0" > /var/run/takepics.lock
+}
+
+do_status () {
+	return 0
+}
+
+case "$1" in
+  start|"")
+        log_daemon_msg "Taking Pictures"
+	do_start
+	log_end_msg 0 || true
+	;;
+  restart|reload|force-reload)
+	echo "Error: argument '$1' not supported" >&2
+	exit 3
+	;;
+  stop)
+        log_daemon_msg "Stopping Taking Pictures"
+	do_stop
+	log_end_msg 0 || true
+	;;
+  status)
+	do_status
+	exit $?
+	;;
+  *)
+	echo "Usage: takepics [start|stop|status]" >&2
+	exit 3
+	;;
+esac
+
+:
